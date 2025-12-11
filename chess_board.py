@@ -27,23 +27,41 @@ class chess_board:
         self.window_maker.title("Chess Engine")
         Y_COORDINATE_FOR_BOTTOM_ALPHABETS = self.BOTTOM_Y_COORDINATE - 10
         Y_COORDINATE_FOR_TOP_ALPHABETS = self.TOP_Y_COORDINATE + 15
+        X_COORDINATE_FOR_LEFT_NUMBERS = self.LEFT_MOST_X_COORDINATE + 10
+        X_COORDINATE_FOR_RIGHT_NUMBERS = self.RIGHT_MOST_X_COORDINATE - 15
+        alph_spacing = self.SPACING // 2
         num_spacing = self.SPACING // 2
-        numbers_for_board = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
+        alphabets_for_board = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
+        numbers_for_board = (1, 2, 3, 4, 5, 6 ,7, 8)
+
+        for alph in alphabets_for_board:
+            self.canvas.create_text(
+                alph_spacing, Y_COORDINATE_FOR_BOTTOM_ALPHABETS,
+                text=alph,
+                fill="white",
+                font=("Halvetica", 16, "bold")
+            )
+            self.canvas.create_text(
+                alph_spacing, Y_COORDINATE_FOR_TOP_ALPHABETS,
+                text=alph,
+                fill="white",
+                font=("Halvetica", 16, "bold")
+            )
+            alph_spacing += self.SPACING
         for num in numbers_for_board:
             self.canvas.create_text(
-                num_spacing, Y_COORDINATE_FOR_BOTTOM_ALPHABETS,
+                X_COORDINATE_FOR_LEFT_NUMBERS, num_spacing,
                 text=num,
                 fill="white",
                 font=("Halvetica", 16, "bold")
             )
             self.canvas.create_text(
-                num_spacing, Y_COORDINATE_FOR_TOP_ALPHABETS,
+                X_COORDINATE_FOR_RIGHT_NUMBERS, num_spacing,
                 text=num,
                 fill="white",
                 font=("Halvetica", 16, "bold")
             )
             num_spacing += self.SPACING
-
     def config(self):
         self.canvas.grid(column=0, row=0)
         self.window_maker.mainloop()
