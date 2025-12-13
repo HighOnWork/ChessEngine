@@ -9,6 +9,7 @@ class chess_board:
         self.TOP_Y_COORDINATE = 0
         self.RIGHT_MOST_X_COORDINATE = 1000
         self.LEFT_MOST_X_COORDINATE = 0
+        self.FONT_SETTINGS = ("Halvetica", 16, "bold")
 
     def create_board(self):
         self.window_maker.minsize(600, 600)
@@ -39,13 +40,13 @@ class chess_board:
                 alph_spacing, Y_COORDINATE_FOR_BOTTOM_ALPHABETS,
                 text=alph,
                 fill="white",
-                font=("Halvetica", 16, "bold")
+                font=self.FONT_SETTINGS
             )
             self.canvas.create_text(
                 alph_spacing, Y_COORDINATE_FOR_TOP_ALPHABETS,
                 text=alph,
                 fill="white",
-                font=("Halvetica", 16, "bold")
+                font=self.FONT_SETTINGS
             )
             alph_spacing += self.SPACING
         for num in numbers_for_board:
@@ -53,13 +54,13 @@ class chess_board:
                 X_COORDINATE_FOR_LEFT_NUMBERS, num_spacing,
                 text=num,
                 fill="white",
-                font=("Halvetica", 16, "bold")
+                font=self.FONT_SETTINGS
             )
             self.canvas.create_text(
                 X_COORDINATE_FOR_RIGHT_NUMBERS, num_spacing,
                 text=num,
                 fill="white",
-                font=("Halvetica", 16, "bold")
+                font=self.FONT_SETTINGS
             )
             num_spacing += self.SPACING
     def config(self):
