@@ -18,6 +18,9 @@ class ChessPieces:
         self.NEW_HEIGHT = 75
         self.CENTER_X = 63
         self.CENTER_Y = 190
+    
+    def on_button_click(self, event):
+        print("Button Clicked")
 
     def image_taketh_and_changeth(self, fileLocation):
         unconvertedImage = Image.open(fileLocation)
@@ -83,16 +86,27 @@ class ChessPieces:
         img_ref_black_bishop = self.image_taketh_and_changeth(".\\BlackBishop.png")
         new_y_for_each_rook = 150 // 2
         new_x_for_each_rook = self.CENTER_X + 125 * 2
-        for _ in range(2):
-            self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_black_bishop)
-            new_x_for_each_rook = 1000 - new_x_for_each_rook
+        
+        black_bishop1 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_black_bishop)
+        self.canvas.tag_bind(black_bishop1, "<Button-1>", self.on_button_click)
+
+        new_x_for_each_rook = 1000 - new_x_for_each_rook
+
+        black_bishop2 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_black_bishop)
+        self.canvas.tag_bind(black_bishop2, "<Button-1>", self.on_button_click)
 
     def white_bishop(self):
         global img_ref_white_bishop
         img_ref_white_bishop = self.image_taketh_and_changeth(".\\WhiteBishop.png")
         new_y_for_each_rook = 1000 - 150 // 2
         new_x_for_each_rook = self.CENTER_X + 125 * 2
-        for _ in range(2):
-            self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
-            new_x_for_each_rook = 1000 - new_x_for_each_rook
         
+        white_bishop1 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
+        self.canvas.tag_bind(white_bishop1, "<Button-1>", self.on_button_click)
+
+        new_x_for_each_rook = 1000 - new_x_for_each_rook
+
+        white_bishop2 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
+        self.canvas.tag_bind(white_bishop2, "<Button-1>", self.on_button_click)
+
+    
