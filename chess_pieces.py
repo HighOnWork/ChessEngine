@@ -2,7 +2,6 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from movement_of_pieces import movement_of_indivisual_pieces
 
-
 global img_ref_black_pawn 
 global img_ref_white_pawn
 global img_ref_black_rook
@@ -189,5 +188,3 @@ class ChessPieces:
 
         white_bishop2 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
         self.canvas.tag_bind(white_bishop2, "<Button-1>", self.on_button_click)
-
-    
