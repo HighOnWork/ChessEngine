@@ -46,7 +46,7 @@ class ChessPieces:
         self.canvas.tag_bind(black_pawn1, "<Button-1>", lambda event, item_id=black_pawn1: self.movement_of_indiv.black_pawns_movement(event,pawn_x_position=new_x_for_each_pawn[0], pawn_y_position=self.CENTER_Y, pawn_item_id=item_id))
 
         black_pawn2 = self.canvas.create_image(new_x_for_each_pawn[1], self.CENTER_Y, image=img_ref_black_pawn)
-        self.canvas.tag_bind(black_pawn2, "<Button-1>", lambda event: self.movement_of_indiv.black_pawns_movement(event, pawn_x_position=new_x_for_each_pawn[1], pawn_y_position=self.CENTER_Y))
+        self.canvas.tag_bind(black_pawn2, "<Button-1>", lambda event, item_id=black_pawn2: self.movement_of_indiv.black_pawns_movement(event, pawn_x_position=new_x_for_each_pawn[1], pawn_y_position=self.CENTER_Y, pawn_item_id=item_id))
 
         black_pawn3 = self.canvas.create_image(new_x_for_each_pawn[2], self.CENTER_Y, image=img_ref_black_pawn)
         self.canvas.tag_bind(black_pawn3, "<Button-1>", lambda event: self.movement_of_indiv.black_pawns_movement(event, pawn_x_position=new_x_for_each_pawn[2], pawn_y_position=self.CENTER_Y))
