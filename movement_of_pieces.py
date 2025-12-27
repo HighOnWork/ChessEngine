@@ -65,12 +65,14 @@ class movement_of_indivisual_pieces:
                         # tk.Misc.lift(spaces_to_move[i])
                 else:
                     spaces_to_move.append(self.canvas.create_rectangle(X1, Y1, X2, Y2, fill="orange", width=2))
+                
 
                 self.current_event_tag1 = spaces_to_move[0]
                 self.canvas.tag_bind(self.current_event_tag1, "<Button-1>", lambda event: self.button_click(event=event, pawn_item_id=pawn_item_id, rectangles=spaces_to_move))
 
                 self.current_event_tag2 = spaces_to_move[1]
                 self.canvas.tag_bind(self.current_event_tag2, "<Button-1>", lambda event: self.pawn_button_click_first_time_second_way(event=event, pawn_item_id=pawn_item_id, rectangles=spaces_to_move))
+
     
     def white_pawns_movement(self, event, pawn_y_position, pawn_x_position):
         spaces_to_move = []
