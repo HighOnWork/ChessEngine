@@ -9,7 +9,7 @@ class movement_of_indivisual_pieces:
         # self.X1, self.Y1 = 0, 250
         self.SIDE_LENGTH = 125
         # self.X2, self.Y2 = self.X1 + self.SIDE_LENGTH, self.Y1 + self.SIDE_LENGTH
-        self.y_max = 300
+        self.y_max = 900
         self.current_event_tag1 = None
         self.current_event_tag2 = None
         self.BLACK_PAWN_MOVE = [False] * 7
@@ -41,37 +41,44 @@ class movement_of_indivisual_pieces:
                 self.current_event_tag2 = None
                 self.BLACK_PAWN_MOVE[0] = True
 
-    def black_pawns_movement(self, event, pawn_y_position, pawn_x_position, pawn_item_id):
+    def black_pawns_movement(self, event, pawn_item_id):
+        
+        coords = self.canvas.coords(pawn_item_id)
+        print(coords)
+
+        current_pawn_x = coords[0]
+        current_pawn_y = coords[1]
 
         print(pawn_item_id)
-        if self.first_turn_done:
 
-            if pawn_y_position <= self.y_max:
+        if self.first_turn_done:
+            if current_pawn_y <= 900:
 
                 spaces_to_move = []
 
-                X1, Y1 = pawn_x_position - 127 // 2, (pawn_y_position - 130 // 2) + self.SIDE_LENGTH
+                X1, Y1 = current_pawn_x - 127 // 2, (current_pawn_y - 130 // 2) + self.SIDE_LENGTH
                 X2, Y2 = X1 + self.SIDE_LENGTH, Y1 + self.SIDE_LENGTH
 
-                if pawn_y_position <= 190:
-                    for i in range(2):
-                                    
-                            if self.black_pawn_selector(ID=pawn_item_id, i=i):
-                                continue
+                # if current_pawn_y <= 900:
+                for i in range(2):
+                                
+                        if self.black_pawn_selector(ID=pawn_item_id, i=i):
+                            continue
+            
+                        spaces_to_move.append(self.canvas.create_rectangle(X1, Y1, X2, Y2, fill="orange", width=2))
+                        Y1 += 125
+                        Y2 += 125
+                    # tk.Misc.lift(spaces_to_move[i])
+                # else:
+                #     spaces_to_move.append(self.canvas.create_rectangle(X1, Y1, X2, Y2, fill="orange", width=2))
                 
-                            spaces_to_move.append(self.canvas.create_rectangle(X1, Y1, X2, Y2, fill="orange", width=2))
-                            Y1 += 125
-                            Y2 += 125
-                        # tk.Misc.lift(spaces_to_move[i])
-                else:
-                    spaces_to_move.append(self.canvas.create_rectangle(X1, Y1, X2, Y2, fill="orange", width=2))
-                
+                if len(spaces_to_move) > 0 :
+                    self.current_event_tag1 = spaces_to_move[0]
+                    self.canvas.tag_bind(self.current_event_tag1, "<Button-1>", lambda event: self.button_click(event=event, pawn_item_id=pawn_item_id, rectangles=spaces_to_move))
 
-                self.current_event_tag1 = spaces_to_move[0]
-                self.canvas.tag_bind(self.current_event_tag1, "<Button-1>", lambda event: self.button_click(event=event, pawn_item_id=pawn_item_id, rectangles=spaces_to_move))
-
-                self.current_event_tag2 = spaces_to_move[1]
-                self.canvas.tag_bind(self.current_event_tag2, "<Button-1>", lambda event: self.pawn_button_click_first_time_second_way(event=event, pawn_item_id=pawn_item_id, rectangles=spaces_to_move))
+                if len(spaces_to_move) > 1:
+                    self.current_event_tag2 = spaces_to_move[1]
+                    self.canvas.tag_bind(self.current_event_tag2, "<Button-1>", lambda event: self.pawn_button_click_first_time_second_way(event=event, pawn_item_id=pawn_item_id, rectangles=spaces_to_move))
 
     
     def white_pawns_movement(self, event, pawn_y_position, pawn_x_position):
