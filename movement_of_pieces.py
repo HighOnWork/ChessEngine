@@ -52,6 +52,7 @@ class movement_of_indivisual_pieces:
                 self.WHITE_PAWN_MOVE[index] = True
             else:
                 index += 1
+        self.first_turn_done = True
 
     def pawn_button_clicked_for_white_pawns_first_time_second_way(self, event, pawn_item_id, rectangles):
         index = 0
@@ -66,6 +67,8 @@ class movement_of_indivisual_pieces:
                     self.canvas.tag_unbind(self.current_event_tag2, "<Button-1>")
                     self.current_event_tag2 = None
                     self.WHITE_PAWN_MOVE[index] = True
+        self.first_turn_done = True
+
             # else:
             #     index += 1
 
@@ -82,6 +85,8 @@ class movement_of_indivisual_pieces:
                 self.BLACK_PAWN_MOVE[index] = True
             else:
                 index += 1
+
+
 
     def pawn_button_clicked_for_black_pawns_first_time_second_way(self, event, pawn_item_id, rectangles):
         index = 0
@@ -176,5 +181,4 @@ class movement_of_indivisual_pieces:
             self.canvas.tag_bind(self.current_event_tag2, "<Button-1>", lambda event: self.pawn_button_clicked_for_white_pawns_first_time_second_way(event=event, pawn_item_id=ID, rectangles=spaces_to_move))
 
         
-        self.first_turn_done = True
         
