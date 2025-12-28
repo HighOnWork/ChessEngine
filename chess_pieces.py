@@ -97,28 +97,44 @@ class ChessPieces:
             new_x_for_each_pawn.append(prev_value + 125)
 
         white_pawn1 = self.canvas.create_image(new_x_for_each_pawn[0], new_y_for_each_pawn, image=img_ref_white_pawn)
-        self.canvas.tag_bind(white_pawn1, "<Button-1>", lambda event: self.movement_of_indiv.white_pawns_movement(event=event, pawn_x_position=new_x_for_each_pawn[0], pawn_y_position=new_y_for_each_pawn))
+        self.canvas.tag_bind(white_pawn1, 
+                             "<Button-1>", 
+                             lambda event, item_id = white_pawn1: self.movement_of_indiv.white_pawns_movement(event=event, ID=item_id))
 
         white_pawn2 = self.canvas.create_image(new_x_for_each_pawn[1], new_y_for_each_pawn, image=img_ref_white_pawn)
-        self.canvas.tag_bind(white_pawn2, "<Button-1>", lambda event: self.movement_of_indiv.white_pawns_movement(event=event, pawn_x_position=new_x_for_each_pawn[1], pawn_y_position=new_y_for_each_pawn))
+        self.canvas.tag_bind(white_pawn2, 
+                             "<Button-1>", 
+                             lambda event, item_id = white_pawn2: self.movement_of_indiv.white_pawns_movement(event=event, ID=item_id))
 
         white_pawn3 = self.canvas.create_image(new_x_for_each_pawn[2], new_y_for_each_pawn, image=img_ref_white_pawn)
-        self.canvas.tag_bind(white_pawn3, "<Button-1>", lambda event: self.movement_of_indiv.white_pawns_movement(event=event, pawn_x_position=new_x_for_each_pawn[2], pawn_y_position=new_y_for_each_pawn))
+        self.canvas.tag_bind(white_pawn3, 
+                             "<Button-1>", 
+                             lambda event, item_id = white_pawn3: self.movement_of_indiv.white_pawns_movement(event=event, ID=item_id))
 
-        white_pawn3 = self.canvas.create_image(new_x_for_each_pawn[3], new_y_for_each_pawn, image=img_ref_white_pawn)
-        self.canvas.tag_bind(white_pawn3, "<Button-1>", lambda event: self.movement_of_indiv.white_pawns_movement(event=event, pawn_x_position=new_x_for_each_pawn[3], pawn_y_position=new_y_for_each_pawn))
+        white_pawn4 = self.canvas.create_image(new_x_for_each_pawn[3], new_y_for_each_pawn, image=img_ref_white_pawn)
+        self.canvas.tag_bind(white_pawn4, 
+                             "<Button-1>", 
+                             lambda event, item_id = white_pawn4: self.movement_of_indiv.white_pawns_movement(event=event, ID=item_id))
 
-        white_pawn4 = self.canvas.create_image(new_x_for_each_pawn[4], new_y_for_each_pawn, image=img_ref_white_pawn)
-        self.canvas.tag_bind(white_pawn4, "<Button-1>", lambda event: self.movement_of_indiv.white_pawns_movement(event=event, pawn_x_position=new_x_for_each_pawn[4], pawn_y_position=new_y_for_each_pawn))
+        white_pawn5 = self.canvas.create_image(new_x_for_each_pawn[4], new_y_for_each_pawn, image=img_ref_white_pawn)
+        self.canvas.tag_bind(white_pawn5, 
+                             "<Button-1>",
+                             lambda event, item_id = white_pawn5: self.movement_of_indiv.white_pawns_movement(event=event, ID=item_id))
 
-        white_pawn5 = self.canvas.create_image(new_x_for_each_pawn[5], new_y_for_each_pawn, image=img_ref_white_pawn)
-        self.canvas.tag_bind(white_pawn5, "<Button-1>", lambda event: self.movement_of_indiv.white_pawns_movement(event=event, pawn_x_position=new_x_for_each_pawn[5], pawn_y_position=new_y_for_each_pawn))
+        white_pawn6 = self.canvas.create_image(new_x_for_each_pawn[5], new_y_for_each_pawn, image=img_ref_white_pawn)
+        self.canvas.tag_bind(white_pawn6, 
+                             "<Button-1>", 
+                             lambda event, item_id = white_pawn6: self.movement_of_indiv.white_pawns_movement(event=event, ID=item_id))
 
-        white_pawn6 = self.canvas.create_image(new_x_for_each_pawn[6], new_y_for_each_pawn, image=img_ref_white_pawn)
-        self.canvas.tag_bind(white_pawn6, "<Button-1>", lambda event: self.movement_of_indiv.white_pawns_movement(event=event, pawn_x_position=new_x_for_each_pawn[6], pawn_y_position=new_y_for_each_pawn))
+        white_pawn7 = self.canvas.create_image(new_x_for_each_pawn[6], new_y_for_each_pawn, image=img_ref_white_pawn)
+        self.canvas.tag_bind(white_pawn7, 
+                             "<Button-1>", 
+                             lambda event, item_id = white_pawn7: self.movement_of_indiv.white_pawns_movement(event=event, ID=item_id))
 
-        white_pawn7 = self.canvas.create_image(new_x_for_each_pawn[7], new_y_for_each_pawn, image=img_ref_white_pawn)
-        self.canvas.tag_bind(white_pawn7, "<Button-1>", lambda event: self.movement_of_indiv.white_pawns_movement(event=event, pawn_x_position=new_x_for_each_pawn[7], pawn_y_position=new_y_for_each_pawn))
+        white_pawn8 = self.canvas.create_image(new_x_for_each_pawn[7], new_y_for_each_pawn, image=img_ref_white_pawn)
+        self.canvas.tag_bind(white_pawn8, 
+                             "<Button-1>", 
+                             lambda event, item_id = white_pawn8: self.movement_of_indiv.white_pawns_movement(event=event, ID=item_id))
         
     def black_rook(self):
         global img_ref_black_rook

@@ -99,8 +99,14 @@ class movement_of_indivisual_pieces:
                     self.canvas.tag_bind(self.current_event_tag2, "<Button-1>", lambda event: self.pawn_button_click_first_time_second_way(event=event, pawn_item_id=pawn_item_id, rectangles=spaces_to_move))
 
     
-    def white_pawns_movement(self, event, pawn_y_position, pawn_x_position):
+    def white_pawns_movement(self, event, ID):
+
         spaces_to_move = []
+
+        coords = self.canvas.coords(ID)
+
+        pawn_x_position = coords[0]
+        pawn_y_position = coords[1]
 
         X1, Y1 = (pawn_x_position - 125 // 2) - 1, (pawn_y_position - 125 - (120 // 2)) - self.SIDE_LENGTH
         X2, Y2 = X1 + self.SIDE_LENGTH, Y1 + self.SIDE_LENGTH
