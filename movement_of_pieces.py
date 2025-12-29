@@ -46,7 +46,10 @@ class movement_of_indivisual_pieces:
         for rec in rectangles:
             self.canvas.delete(rec)
         self.spaces_to_move = []
-        self.canvas.tag_unbind(self.current_event_tag1, '<Button-1>')
+        try:
+            self.canvas.tag_unbind(self.current_event_tag1, '<Button-1>')
+        except:
+            print("Didnt work")
         self.current_event_tag1 = None
         for x in range(57, 65):
         # if pawn_item_id == 49:
@@ -54,6 +57,7 @@ class movement_of_indivisual_pieces:
                 self.WHITE_PAWN_MOVE[index] = True
             else:
                 index += 1
+        print("should work")
         self.first_turn_done = True
 
     def pawn_button_clicked_for_white_pawns_first_time_second_way(self, event, pawn_item_id, rectangles):
@@ -67,7 +71,10 @@ class movement_of_indivisual_pieces:
                     for rec in rectangles:
                         self.canvas.delete(rec)
                     self.spaces_to_move = []
-                    self.canvas.tag_unbind(self.current_event_tag2, "<Button-1>")
+                    try:
+                        self.canvas.tag_unbind(self.current_event_tag2, "<Button-1>")
+                    except:
+                        print("nah dont worry about it")
                     self.current_event_tag2 = None
                     self.WHITE_PAWN_MOVE[index] = True
             else:
@@ -83,7 +90,10 @@ class movement_of_indivisual_pieces:
         for rec in rectangles:
             self.canvas.delete(rec)
         self.spaces_to_move = []
-        self.canvas.tag_unbind(self.current_event_tag1, '<Button-1>')
+        try:
+            self.canvas.tag_unbind(self.current_event_tag1, '<Button-1>')
+        except:
+            print("Doesnt work its fine dont worry about it")
         self.current_event_tag1 = None
         for x in range(49, 58):
         # if pawn_item_id == 49:
@@ -105,7 +115,10 @@ class movement_of_indivisual_pieces:
                     for rec in rectangles:
                         self.canvas.delete(rec)
                     self.spaces_to_move = []
-                    self.canvas.tag_unbind(self.current_event_tag2, "<Button-1>")
+                    try:
+                        self.canvas.tag_unbind(self.current_event_tag2, "<Button-1>")
+                    except:
+                        print("GG")
                     self.current_event_tag2 = None
                     self.BLACK_PAWN_MOVE[index] = True
             else:
@@ -185,7 +198,7 @@ class movement_of_indivisual_pieces:
             self.spaces_to_move.append(self.canvas.create_rectangle(X1, Y1, X2, Y2, fill="orange", width=2))
 
         for spaces in self.spaces_to_move:
-            self.canvas.tag_bind(spaces, "<Button-1>", self.button_clicked_for_black_pawns)
+            self.canvas.tag_bind(spaces, "<Button-1>", self.button_clicked_for_white_pawns)
         
         if len(self.spaces_to_move) > 0 :
                     self.current_event_tag1 = self.spaces_to_move[0]
