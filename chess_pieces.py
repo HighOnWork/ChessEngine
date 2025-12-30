@@ -10,6 +10,7 @@ global img_ref_white_horse
 global img_ref_black_horse
 global img_ref_white_bishop
 global img_ref_black_bishop
+global img_ref_white_queen
 
 class ChessPieces:
     def __init__(self, windowMaker, canvas):
@@ -222,58 +223,53 @@ class ChessPieces:
         self.canvas.tag_bind(white_bishop2, "<Button-1>", self.on_button_click)
 
 
+    # def white_queen(self):
+    #         global img_ref_white_bishop
+    #         img_ref_white_bishop = self.image_taketh_and_changeth(".\\WhiteBishop.png")
+    #         new_y_for_each_rook = 1000 - 150 // 2
+    #         new_x_for_each_rook = self.CENTER_X + 125 * 2
+            
+    #         white_bishop1 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
+    #         self.canvas.tag_bind(white_bishop1, "<Button-1>", self.on_button_click)
+
+    #         new_x_for_each_rook = 1000 - new_x_for_each_rook
+
+    #         white_bishop2 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
+    #         self.canvas.tag_bind(white_bishop2, "<Button-1>", self.on_button_click)
+
+    # def white_king(self):
+    #         global img_ref_white_bishop
+    #         img_ref_white_bishop = self.image_taketh_and_changeth(".\\WhiteBishop.png")
+    #         new_y_for_each_rook = 1000 - 150 // 2
+    #         new_x_for_each_rook = self.CENTER_X + 125 * 2
+            
+    #         white_bishop1 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
+    #         self.canvas.tag_bind(white_bishop1, "<Button-1>", self.on_button_click)
+
+    #         new_x_for_each_rook = 1000 - new_x_for_each_rook
+
+    #         white_bishop2 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
+    #         self.canvas.tag_bind(white_bishop2, "<Button-1>", self.on_button_click)
+
     def white_queen(self):
-            global img_ref_white_bishop
-            img_ref_white_bishop = self.image_taketh_and_changeth(".\\WhiteBishop.png")
+            global img_ref_white_queen
+            img_ref_white_queen = self.image_taketh_and_changeth(".\\WhiteQueen.png")
             new_y_for_each_rook = 1000 - 150 // 2
-            new_x_for_each_rook = self.CENTER_X + 125 * 2
+            new_x_for_each_rook = self.CENTER_X + 125 * 3
             
-            white_bishop1 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
-            self.canvas.tag_bind(white_bishop1, "<Button-1>", self.on_button_click)
+            blackQueen = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_queen)
+            self.canvas.tag_bind(blackQueen, "<Button-1>", self.on_button_click)
 
-            new_x_for_each_rook = 1000 - new_x_for_each_rook
-
-            white_bishop2 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
-            self.canvas.tag_bind(white_bishop2, "<Button-1>", self.on_button_click)
-
-    def white_king(self):
-            global img_ref_white_bishop
-            img_ref_white_bishop = self.image_taketh_and_changeth(".\\WhiteBishop.png")
-            new_y_for_each_rook = 1000 - 150 // 2
-            new_x_for_each_rook = self.CENTER_X + 125 * 2
+    # def black_king(self):
+    #         global img_ref_white_bishop
+    #         img_ref_white_bishop = self.image_taketh_and_changeth(".\\WhiteBishop.png")
+    #         new_y_for_each_rook = 1000 - 150 // 2
+    #         new_x_for_each_rook = self.CENTER_X + 125 * 2
             
-            white_bishop1 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
-            self.canvas.tag_bind(white_bishop1, "<Button-1>", self.on_button_click)
+    #         white_bishop1 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
+    #         self.canvas.tag_bind(white_bishop1, "<Button-1>", self.on_button_click)
 
-            new_x_for_each_rook = 1000 - new_x_for_each_rook
+    #         new_x_for_each_rook = 1000 - new_x_for_each_rook
 
-            white_bishop2 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
-            self.canvas.tag_bind(white_bishop2, "<Button-1>", self.on_button_click)
-
-    def black_queen(self):
-            global img_ref_white_bishop
-            img_ref_white_bishop = self.image_taketh_and_changeth(".\\WhiteBishop.png")
-            new_y_for_each_rook = 1000 - 150 // 2
-            new_x_for_each_rook = self.CENTER_X + 125 * 2
-            
-            white_bishop1 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
-            self.canvas.tag_bind(white_bishop1, "<Button-1>", self.on_button_click)
-
-            new_x_for_each_rook = 1000 - new_x_for_each_rook
-
-            white_bishop2 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
-            self.canvas.tag_bind(white_bishop2, "<Button-1>", self.on_button_click)
-
-    def black_king(self):
-            global img_ref_white_bishop
-            img_ref_white_bishop = self.image_taketh_and_changeth(".\\WhiteBishop.png")
-            new_y_for_each_rook = 1000 - 150 // 2
-            new_x_for_each_rook = self.CENTER_X + 125 * 2
-            
-            white_bishop1 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
-            self.canvas.tag_bind(white_bishop1, "<Button-1>", self.on_button_click)
-
-            new_x_for_each_rook = 1000 - new_x_for_each_rook
-
-            white_bishop2 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
-            self.canvas.tag_bind(white_bishop2, "<Button-1>", self.on_button_click)
+    #         white_bishop2 = self.canvas.create_image(new_x_for_each_rook, new_y_for_each_rook, image=img_ref_white_bishop)
+    #         self.canvas.tag_bind(white_bishop2, "<Button-1>", self.on_button_click)
