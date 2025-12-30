@@ -17,6 +17,33 @@ class movement_of_indivisual_pieces:
         self.spaces_to_move = []
         self.move_count = 1
 
+
+    def is_white_pawn_there(self, coord_point_x, coord_point_y):
+        
+        all_white_pawns = self.canvas.find_withtag("white_pawn")
+        
+        for pawn_id in all_white_pawns:
+            coords = self.canvas.coords(pawn_id)
+            
+            if not coords:
+                continue
+                
+            white_x = coords[0]
+            white_y = coords[1]
+
+            #Basically the difference in x and y coordinates should be less than 20 to be considered the same spot. 
+            #So lets say if a pawn is at (125, 625) and we are checking (130, 625) then the difference in x is 5 which is less than 20 so its the same spot.
+            same_column = abs(coord_point_x - white_x) < 20
+            
+            is_directly_below = abs(white_y - (coord_point_y + 125)) < 20
+            
+            if same_column and is_directly_below:
+                print("Blocked by white pawn!")
+                return True
+
+        return False
+        
+
     def white_pawn_selector(self, ID, i):
         index_number = 0
         for x in range(57, 66):
@@ -150,25 +177,28 @@ class movement_of_indivisual_pieces:
                     X2, Y2 = X1 + self.SIDE_LENGTH, Y1 + self.SIDE_LENGTH
 
                     # if current_pawn_y <= 900:
-                    for i in range(2):
-                                    
-                            if self.black_pawn_selector(ID=pawn_item_id, i=i):
-                                continue
-                
-                            self.spaces_to_move.append(self.canvas.create_rectangle(X1, Y1, X2, Y2, fill="orange", width=2))
-                            Y1 += 125
-                            Y2 += 125
-                        # tk.Misc.lift(spaces_to_move[i])
-                    # else:
-                    #     spaces_to_move.append(self.canvas.create_rectangle(X1, Y1, X2, Y2, fill="orange", width=2))
-                    
-                    if len(self.spaces_to_move) > 0 :
-                        self.current_event_tag1 = self.spaces_to_move[0]
-                        self.canvas.tag_bind(self.current_event_tag1, "<Button-1>", lambda event: self.button_clicked_for_black_pawns(event=event, pawn_item_id=pawn_item_id, rectangles=self.spaces_to_move))
+                    if not self.is_white_pawn_there(coord_point_x=current_pawn_x, coord_point_y=current_pawn_y):
 
-                    if len(self.spaces_to_move) > 1:
-                        self.current_event_tag2 = self.spaces_to_move[1]
-                        self.canvas.tag_bind(self.current_event_tag2, "<Button-1>", lambda event: self.pawn_button_clicked_for_black_pawns_first_time_second_way(event=event, pawn_item_id=pawn_item_id, rectangles=self.spaces_to_move))
+                        for i in range(2):
+                                
+                                        
+                                if self.black_pawn_selector(ID=pawn_item_id, i=i):
+                                    continue
+                    
+                                self.spaces_to_move.append(self.canvas.create_rectangle(X1, Y1, X2, Y2, fill="orange", width=2))
+                                Y1 += 125
+                                Y2 += 125
+                            # tk.Misc.lift(spaces_to_move[i])
+                        # else:
+                        #     spaces_to_move.append(self.canvas.create_rectangle(X1, Y1, X2, Y2, fill="orange", width=2))
+                        
+                        if len(self.spaces_to_move) > 0 :
+                            self.current_event_tag1 = self.spaces_to_move[0]
+                            self.canvas.tag_bind(self.current_event_tag1, "<Button-1>", lambda event: self.button_clicked_for_black_pawns(event=event, pawn_item_id=pawn_item_id, rectangles=self.spaces_to_move))
+
+                        if len(self.spaces_to_move) > 1:
+                            self.current_event_tag2 = self.spaces_to_move[1]
+                            self.canvas.tag_bind(self.current_event_tag2, "<Button-1>", lambda event: self.pawn_button_clicked_for_black_pawns_first_time_second_way(event=event, pawn_item_id=pawn_item_id, rectangles=self.spaces_to_move))
 
     
     def white_pawns_movement(self, event, ID):
