@@ -12,11 +12,48 @@ class movement_of_indivisual_pieces:
         self.y_max = 900
         self.current_event_tag1 = None
         self.current_event_tag2 = None
+        self.current_event_tag3 = None
         self.BLACK_PAWN_MOVE = [False] * 8
         self.WHITE_PAWN_MOVE = [False] * 8
         self.spaces_to_move = []
+        self.spaces_to_take = []
+        self.which_side_can_take = ""
         self.move_count = 1
 
+    def attack(self, event):
+        print("Attack")
+
+    def is_white_pawn_left_or_right(self, coord_point_x, coord_point_y):
+
+        all_white_pawns = self.canvas.find_withtag("white_pawn")
+        
+        for pawn_id in all_white_pawns:
+            coords = self.canvas.coords(pawn_id)
+            
+            if not coords:
+                continue
+                
+            white_x = coords[0]
+            white_y = coords[1]
+
+            #Basically the difference in x and y coordinates should be less than 20 to be considered the same spot. 
+            #So lets say if a pawn is at (125, 625) and we are checking (130, 625) then the difference in x is 5 which is less than 20 so its the same spot.
+            is_left_column = abs((coord_point_x - 125) - white_x) < 20
+            is_right_column = abs((coord_point_x + 125) - white_x) < 20
+            
+            is_directly_above = abs(white_y - (coord_point_y + 125)) < 20
+            
+            if is_left_column and is_directly_above:
+                print("Black pawn can capture!")
+                self.which_side_can_take = "left"
+                return True
+            
+            if is_right_column and is_directly_above:
+                print("Black pawn can capture!")
+                self.which_side_can_take = "right"
+                return True
+
+        return False
 
     def is_white_pawn_there(self, coord_point_x, coord_point_y):
         
@@ -192,6 +229,11 @@ class movement_of_indivisual_pieces:
                     self.canvas.delete(space)
                 self.spaces_to_move = []
 
+            if self.spaces_to_take:
+                for space in self.spaces_to_take:
+                    self.canvas.delete(space)
+                self.spaces_to_take = []
+
             if self.first_turn_done:
                 if current_pawn_y <= 900:
 
@@ -200,7 +242,21 @@ class movement_of_indivisual_pieces:
                     X2, Y2 = X1 + self.SIDE_LENGTH, Y1 + self.SIDE_LENGTH
 
                     # if current_pawn_y <= 900:
+                    
+                    if self.is_white_pawn_left_or_right(coord_point_x=current_pawn_x, coord_point_y=current_pawn_y):
+                        y_can_take_at1 = (current_pawn_y - 130 // 2) + self.SIDE_LENGTH
+                        if self.which_side_can_take == "left":
+                            x_can_take_at1 = current_pawn_x - 125 // 2
+                        else:
+                            x_can_take_at1 = current_pawn_x + 125 // 2
+                        
+                        y_can_take_at2 = y_can_take_at1 + self.SIDE_LENGTH
+                        x_can_take_at2 = x_can_take_at1 + self.SIDE_LENGTH
+
+                        self.spaces_to_take.append(self.canvas.create_rectangle(x_can_take_at1, y_can_take_at1, x_can_take_at2, y_can_take_at2, fill="orange", width=2))
+
                     if not self.is_white_pawn_there(coord_point_x=current_pawn_x, coord_point_y=current_pawn_y):
+                        
 
                         for i in range(2):
                                 
@@ -223,7 +279,11 @@ class movement_of_indivisual_pieces:
                             self.current_event_tag2 = self.spaces_to_move[1]
                             self.canvas.tag_bind(self.current_event_tag2, "<Button-1>", lambda event: self.pawn_button_clicked_for_black_pawns_first_time_second_way(event=event, pawn_item_id=pawn_item_id, rectangles=self.spaces_to_move))
 
-    
+                        if len(self.spaces_to_take) > 0:
+                            self.current_event_tag3 = self.spaces_to_take[0]
+                            self.canvas.tag_bind(self.current_event_tag3, "<Button-1>", lambda event: self.attack(event=event))
+
+        
     def white_pawns_movement(self, event, ID):
 
         if self.move_count % 2 != 0:
