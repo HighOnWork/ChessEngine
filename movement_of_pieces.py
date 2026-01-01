@@ -46,11 +46,13 @@ class movement_of_indivisual_pieces:
             if is_left_column and is_directly_above:
                 print("Black pawn can capture!")
                 self.which_side_can_take = "left"
+                print(self.which_side_can_take)
                 return True
             
             if is_right_column and is_directly_above:
                 print("Black pawn can capture!")
                 self.which_side_can_take = "right"
+                print(self.which_side_can_take)
                 return True
 
         return False
@@ -173,12 +175,15 @@ class movement_of_indivisual_pieces:
         self.first_turn_done = True
         self.move_count += 1
 
-    def button_clicked_for_black_pawns(self, event, pawn_item_id, rectangles):
+    def button_clicked_for_black_pawns(self, event, pawn_item_id, rectangles, attack_thingys):
         index = 0
         self.canvas.move(pawn_item_id, 0, 125)
         for rec in rectangles:
             self.canvas.delete(rec)
         self.spaces_to_move = []
+        for att in attack_thingys:
+            self.canvas.delete(att)
+        self.spaces_to_take = []
         try:
             self.canvas.tag_unbind(self.current_event_tag1, '<Button-1>')
         except:
@@ -192,7 +197,7 @@ class movement_of_indivisual_pieces:
                 index += 1
         self.move_count += 1
 
-    def pawn_button_clicked_for_black_pawns_first_time_second_way(self, event, pawn_item_id, rectangles):
+    def pawn_button_clicked_for_black_pawns_first_time_second_way(self, event, pawn_item_id, rectangles, attack_thingys):
         index = 0
         for x in range(49, 58):
             if pawn_item_id == x:
@@ -203,6 +208,9 @@ class movement_of_indivisual_pieces:
                     for rec in rectangles:
                         self.canvas.delete(rec)
                     self.spaces_to_move = []
+                    for att in attack_thingys:
+                        self.canvas.delete(att)
+                    self.spaces_to_take = []
                     try:
                         self.canvas.tag_unbind(self.current_event_tag2, "<Button-1>")
                     except:
@@ -246,14 +254,15 @@ class movement_of_indivisual_pieces:
                     if self.is_white_pawn_left_or_right(coord_point_x=current_pawn_x, coord_point_y=current_pawn_y):
                         y_can_take_at1 = (current_pawn_y - 130 // 2) + self.SIDE_LENGTH
                         if self.which_side_can_take == "left":
-                            x_can_take_at1 = current_pawn_x - 125 // 2
-                        else:
+                            x_can_take_at1 = current_pawn_x - 93 * 2 - 1
+                        elif self.which_side_can_take == "right":
                             x_can_take_at1 = current_pawn_x + 125 // 2
                         
                         y_can_take_at2 = y_can_take_at1 + self.SIDE_LENGTH
                         x_can_take_at2 = x_can_take_at1 + self.SIDE_LENGTH
 
                         self.spaces_to_take.append(self.canvas.create_rectangle(x_can_take_at1, y_can_take_at1, x_can_take_at2, y_can_take_at2, fill="orange", width=2))
+                        
 
                     if not self.is_white_pawn_there(coord_point_x=current_pawn_x, coord_point_y=current_pawn_y):
                         
@@ -273,11 +282,11 @@ class movement_of_indivisual_pieces:
                         
                         if len(self.spaces_to_move) > 0 :
                             self.current_event_tag1 = self.spaces_to_move[0]
-                            self.canvas.tag_bind(self.current_event_tag1, "<Button-1>", lambda event: self.button_clicked_for_black_pawns(event=event, pawn_item_id=pawn_item_id, rectangles=self.spaces_to_move))
+                            self.canvas.tag_bind(self.current_event_tag1, "<Button-1>", lambda event: self.button_clicked_for_black_pawns(event=event, pawn_item_id=pawn_item_id, rectangles=self.spaces_to_move, attack_thingys=self.spaces_to_take))
 
                         if len(self.spaces_to_move) > 1:
                             self.current_event_tag2 = self.spaces_to_move[1]
-                            self.canvas.tag_bind(self.current_event_tag2, "<Button-1>", lambda event: self.pawn_button_clicked_for_black_pawns_first_time_second_way(event=event, pawn_item_id=pawn_item_id, rectangles=self.spaces_to_move))
+                            self.canvas.tag_bind(self.current_event_tag2, "<Button-1>", lambda event: self.pawn_button_clicked_for_black_pawns_first_time_second_way(event=event, pawn_item_id=pawn_item_id, rectangles=self.spaces_to_move, attack_thingys=self.spaces_to_take))
 
                         if len(self.spaces_to_take) > 0:
                             self.current_event_tag3 = self.spaces_to_take[0]
