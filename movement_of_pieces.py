@@ -33,7 +33,7 @@ class movement_of_indivisual_pieces:
                     self.canvas.delete(space)
                 self.spaces_to_move = []
 
-    def attack(self, event, ID):
+    def blackPawnAttack(self, event, ID):
         all_white_pawns = self.canvas.find_withtag("white_pawn")
 
         
@@ -74,7 +74,7 @@ class movement_of_indivisual_pieces:
         self.move_count += 1
     
 
-    def attack_left(self, event, ID):
+    def attack_left_for_black_pawn(self, event, ID):
         all_white_pawns = self.canvas.find_withtag("white_pawn")
 
         self.canvas.move(ID, -125, 125)
@@ -388,11 +388,11 @@ class movement_of_indivisual_pieces:
 
                     if len(self.spaces_to_take) > 0:
                         self.current_event_tag3 = self.spaces_to_take[0]
-                        self.canvas.tag_bind(self.current_event_tag3, "<Button-1>", lambda event: self.attack(event=event, ID=pawn_item_id))
+                        self.canvas.tag_bind(self.current_event_tag3, "<Button-1>", lambda event: self.blackPawnAttack(event=event, ID=pawn_item_id))
 
                     if len(self.spaces_to_take) > 1:
                         self.current_event_tag4 = self.spaces_to_take[1]
-                        self.canvas.tag_bind(self.current_event_tag4, "<Button-1>", lambda event: self.attack_left(event=event, ID=pawn_item_id))
+                        self.canvas.tag_bind(self.current_event_tag4, "<Button-1>", lambda event: self.attack_left_for_black_pawn(event=event, ID=pawn_item_id))
                         
 
 
