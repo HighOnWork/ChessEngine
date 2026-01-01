@@ -303,21 +303,23 @@ class movement_of_indivisual_pieces:
                         # else:
                         #     spaces_to_move.append(self.canvas.create_rectangle(X1, Y1, X2, Y2, fill="orange", width=2))
                         
-                        if len(self.spaces_to_move) > 0 :
-                            self.current_event_tag1 = self.spaces_to_move[0]
-                            self.canvas.tag_bind(self.current_event_tag1, "<Button-1>", lambda event: self.button_clicked_for_black_pawns(event=event, pawn_item_id=pawn_item_id, rectangles=self.spaces_to_move, attack_thingys=self.spaces_to_take))
+                    if len(self.spaces_to_move) > 0 :
+                        self.current_event_tag1 = self.spaces_to_move[0]
+                        self.canvas.tag_bind(self.current_event_tag1, "<Button-1>", lambda event: self.button_clicked_for_black_pawns(event=event, pawn_item_id=pawn_item_id, rectangles=self.spaces_to_move, attack_thingys=self.spaces_to_take))
 
-                        if len(self.spaces_to_move) > 1:
-                            self.current_event_tag2 = self.spaces_to_move[1]
-                            self.canvas.tag_bind(self.current_event_tag2, "<Button-1>", lambda event: self.pawn_button_clicked_for_black_pawns_first_time_second_way(event=event, pawn_item_id=pawn_item_id, rectangles=self.spaces_to_move, attack_thingys=self.spaces_to_take))
+                    if len(self.spaces_to_move) > 1:
+                        self.current_event_tag2 = self.spaces_to_move[1]
+                        self.canvas.tag_bind(self.current_event_tag2, "<Button-1>", lambda event: self.pawn_button_clicked_for_black_pawns_first_time_second_way(event=event, pawn_item_id=pawn_item_id, rectangles=self.spaces_to_move, attack_thingys=self.spaces_to_take))
 
-                        if len(self.spaces_to_take) > 0:
-                            self.current_event_tag3 = self.spaces_to_take[0]
-                            self.canvas.tag_bind(self.current_event_tag3, "<Button-1>", lambda event: self.attack(event=event))
+                    if len(self.spaces_to_take) > 0:
+                        self.current_event_tag3 = self.spaces_to_take[0]
+                        self.canvas.tag_bind(self.current_event_tag3, "<Button-1>", lambda event: self.attack(event=event))
 
-                        if len(self.spaces_to_take) > 1:
-                            self.current_event_tag4 = self.spaces_to_take[1]
-                            self.canvas.tag_bind(self.current_event_tag4, "<Button-1>", lambda event: self.attack(event=event))
+                    if len(self.spaces_to_take) > 1:
+                        self.current_event_tag4 = self.spaces_to_take[1]
+                        self.canvas.tag_bind(self.current_event_tag4, "<Button-1>", lambda event: self.attack(event=event))
+                        
+
 
         
     def white_pawns_movement(self, event, ID):
