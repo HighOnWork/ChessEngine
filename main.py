@@ -22,17 +22,17 @@ new_chess_board.numbers_and_alphabets()
 
 for i in range(8):
     chess_pieces.spawn_pieces("bp", i, 0)
-    chess_pieces.spawn_pieces("wp", i, 8)
+    chess_pieces.spawn_pieces("wp", i, 7)
 for i in range(2):
     chess_pieces.spawn_pieces("wr" ,i, 1)
-    chess_pieces.spawn_pieces("br" ,i, 7)
+    chess_pieces.spawn_pieces("br" ,i, 6)
     chess_pieces.spawn_pieces("wh" ,i, 1)
-    chess_pieces.spawn_pieces("bh" ,i, 7)
+    chess_pieces.spawn_pieces("bh" ,i, 6)
     chess_pieces.spawn_pieces("wb" ,i, 1)
-    chess_pieces.spawn_pieces("bb" ,i, 7)
+    chess_pieces.spawn_pieces("bb" ,i, 6)
     chess_pieces.spawn_pieces("wq" ,i, 1)
-    chess_pieces.spawn_pieces("bq" ,i, 7)
+    chess_pieces.spawn_pieces("bq" ,i, 6)
     chess_pieces.spawn_pieces("wk" ,i, 1)
-    chess_pieces.spawn_pieces("bk" ,i, 7)
+    chess_pieces.spawn_pieces("bk" ,i, 6)
 
 config()
