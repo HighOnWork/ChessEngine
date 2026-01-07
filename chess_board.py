@@ -1,10 +1,11 @@
 import tkinter as tk
 
-class chess_board:
+class ChessBoard:
     def __init__(self, windowMaker, canvas):
         self.window_maker = windowMaker
         self.canvas = canvas
         self.SPACING = 125
+        self.MIDDLE_OF_SQUARE = self.SPACING // 2
         self.BOTTOM_Y_COORDINATE = 1000
         self.TOP_Y_COORDINATE = 0
         self.RIGHT_MOST_X_COORDINATE = 1000
@@ -30,8 +31,8 @@ class chess_board:
         Y_COORDINATE_FOR_TOP_ALPHABETS = self.TOP_Y_COORDINATE + 15
         X_COORDINATE_FOR_LEFT_NUMBERS = self.LEFT_MOST_X_COORDINATE + 15
         X_COORDINATE_FOR_RIGHT_NUMBERS = self.RIGHT_MOST_X_COORDINATE - 15
-        alph_spacing = self.SPACING // 2
-        num_spacing = self.SPACING // 2
+        alph_spacing = self.MIDDLE_OF_SQUARE
+        num_spacing = self.MIDDLE_OF_SQUARE
         alphabets_for_board = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
         numbers_for_board = (1, 2, 3, 4, 5, 6 ,7, 8)
 
@@ -63,6 +64,4 @@ class chess_board:
                 font=self.FONT_SETTINGS
             )
             num_spacing += self.SPACING
-    def config(self):
-        self.canvas.grid(column=0, row=0)
-        self.window_maker.mainloop()
+    
