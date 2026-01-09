@@ -11,7 +11,6 @@ class ChessBoard:
         self.RIGHT_MOST_X_COORDINATE = 1000
         self.LEFT_MOST_X_COORDINATE = 0
         self.FONT_SETTINGS = ("Halvetica", 16, "bold")
-        
 
     def create_board(self):
         self.window_maker.minsize(600, 600)
