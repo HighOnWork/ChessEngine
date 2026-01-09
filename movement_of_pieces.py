@@ -37,45 +37,56 @@ class movement_of_indivisual_pieces:
             "q" : {"vectors": [(0,1), (0,-1), (1,0), (-1,0), (1,1), (1,-1), (-1,1), (-1,-1)], "sliding": True, "black": False},
         }
 
+    def draw_indicator(self, x, y, size):
+        self.spaces_to_move.append(self.canvas.create_rectangle(x - size // 2, 
+                                                    y - size // 2, 
+                                                    x + size // 2, 
+                                                    y + size // 2, 
+                                                    fill="orange", 
+                                                    stipple="gray50",
+                                                    width=2))
+
+
     def remove_spaces(self):
-            if self.spaces_to_take:
-                    for space in self.spaces_to_take:
-                        self.canvas.delete(space)
-                    self.spaces_to_take.clear()
-            
-            if self.spaces_to_move:
-                    for space in self.spaces_to_move:
-                        self.canvas.delete(space)
-                    self.spaces_to_move.clear()
+        if self.spaces_to_take:
+                for space in self.spaces_to_take:
+                    self.canvas.delete(space)
+                self.spaces_to_take.clear()
+        
+        if self.spaces_to_move:
+                for space in self.spaces_to_move:
+                    self.canvas.delete(space)
+                self.spaces_to_move.clear()
 
     def move_pieces(self, event, unique_id, ccd, square_size):
         self.remove_spaces()
         coords = self.canvas.coords(unique_id)
         start_x = coords[0]
         start_y = coords[1]
-        if self.move_count % 2 == 0 and ccd[0] == 'b':
 
+        is_white = ccd[0] == 'w'
+
+        if (self.move_count % 2 == 0 and not is_white) or (self.move_count % 2 != 0 and is_white):
             rules = self.MOVE_RULES[ccd[1]]
-            
-            if rules["black"] == True:
-                vector_to_choose = "vectors_black"
-            else:
-                vector_to_choose = "vectors"
 
-            for vx, vy in rules[vector_to_choose]:
-                target_x, target_y =start_x + (vx * square_size), start_y + (vy  * square_size)
-                self.canvas.coords(unique_id, target_x, target_y)
+            key = "vectors_black" if (not is_white and rules.get("black")) else "vectors"
 
-            self.move_count += 1
+            for vx, vy in rules[key]:
+                cur_x = start_x
+                cur_y = start_y
 
-        elif self.move_count % 2 != 0 and ccd[0] == 'w':
+                while True:
+                    cur_x += (vx * square_size)
+                    cur_y += (vy * square_size)
+                    if not (0 < cur_x < 1000 and 0 < cur_y < 1000):
+                        break
+                   
+                    self.draw_indicator(cur_x, cur_y, square_size)
 
-            rules = self.MOVE_RULES[ccd[1]]
-            
-            for vx, vy in rules["vectors"]:
-                target_x, target_y = start_x + (vx * square_size), start_y + (vy * square_size)
-                self.canvas.coords(unique_id, target_x, target_y)
-            
+                    if not rules.get("sliding"):
+                         break
+                        # self.canvas.coords(unique_id, target_x, target_y)
+
             self.move_count += 1
 
     
