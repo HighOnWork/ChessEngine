@@ -26,6 +26,4 @@ for i in range(8):
     chess_pieces.spawn_pieces("b"+piece_type, i , 0)
     chess_pieces.spawn_pieces("w"+piece_type, i, 7)
 
-print("Hello World!")
-
 config()
