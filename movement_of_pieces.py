@@ -3,31 +3,12 @@
 
 class movement_of_indivisual_pieces:
     def __init__(self, canvas):
-        # self.chessPieces = ChessPieces()
         self.first_turn_done = False
         self.canvas = canvas
-        # self.X1, self.Y1 = 0, 250
-        # self.SIDE_LENGTH = 125
-        # self.X2, self.Y2 = self.X1 + self.SIDE_LENGTH, self.Y1 + self.SIDE_LENGTH
-        # self.y_max = 900
-        # self.current_event_tag1 = None
-        # self.current_event_tag2 = None
-        # self.current_event_tag3 = None
-        # self.current_event_tag4 = None
-        # self.BLACK_PAWN_MOVE = [False] * 8
-        # self.WHITE_PAWN_MOVE = [False] * 8
         self.spaces_to_move = []
         self.spaces_to_take = []
-        # self.which_side_can_take = ""
         self.move_count = 1
-        # self.pieces = (
-        # "wp", "bp",
-        # "wr",  "br",
-        # "wh",  "bh", 
-        # "wb", "bb", 
-        # "wq", "bq", 
-        # "wk", "bk",
-        # )
+        self.Flag = False
         self.MOVE_RULES = {
             "p" : {'vectors': [(0, -1)], 'vectors_black': [(0, 1)], "sliding" : False, "black": True},
             "r" : {"vectors": [(0,1), (0,-1), (1,0), (-1,0)], "sliding": True, "black": False},
@@ -36,10 +17,6 @@ class movement_of_indivisual_pieces:
             "k" : {'vectors': [(1,1), (1,-1), (-1,1), (-1,-1), (0,1), (0,-1), (1,0), (-1,0)], "sliding" : False, "black": False},
             "q" : {"vectors": [(0,1), (0,-1), (1,0), (-1,0), (1,1), (1,-1), (-1,1), (-1,-1)], "sliding": True, "black": False},
         }
-
-    
-
-    
 
     def remove_spaces(self):
         if self.spaces_to_take:
@@ -52,6 +29,15 @@ class movement_of_indivisual_pieces:
                     self.canvas.delete(space)
                 self.spaces_to_move.clear()
 
+    def piece_infront(self, square_id):
+        square_coords = self.canvas.coords(square_id)  
+        overlapping = self.canvas.find_overlapping(*square_coords)
+        for item in overlapping:
+            if "pieces" in self.canvas.gettags(item):
+                self.Flag = True
+                return True
+        return False
+
     def button_clicked(self, event, square_id, unique_id):
         print("Clicked on indicator")
         square_id_coords = self.canvas.coords(square_id)
@@ -63,17 +49,22 @@ class movement_of_indivisual_pieces:
         self.remove_spaces()
 
     def draw_indicator(self, x, y, size, ID):
-        self.spaces_to_move.append(self.canvas.create_rectangle(x - size // 2, 
+        square = (self.canvas.create_rectangle(x - size // 2, 
                                                     y - size // 2, 
                                                     x + size // 2, 
                                                     y + size // 2, 
                                                     fill="orange", 
                                                     stipple="gray50",
                                                     width=2))
-        for square in self.spaces_to_move:
-            self.canvas.tag_bind(square, "<Button-1>", lambda event, s=square, id=ID: self.button_clicked(event, s, id))
+        self.spaces_to_move.append(square)
+        self.canvas.tag_bind(square, "<Button-1>", lambda event, s=square, id=ID: self.button_clicked(event, s, id))
+
+        self.piece_infront(square_id=square)
+          
+        
 
     def move_pieces(self, event, unique_id, ccd, square_size):
+        self.Flag = False
         self.remove_spaces()
         coords = self.canvas.coords(unique_id)
         start_x = coords[0]
@@ -100,5 +91,10 @@ class movement_of_indivisual_pieces:
 
                     if not rules.get("sliding"):
                          break
+
+                    if self.Flag:
+                         break
+                    
+                    
 
             
