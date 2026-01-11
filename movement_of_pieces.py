@@ -12,6 +12,7 @@ class movement_of_indivisual_pieces:
         self.spaces_to_take = []
         self.move_count = 1
         self.lastID = None
+        self.destroyPiece = False
         self.Flag = False
         self.MOVE_RULES = {
             "p" : {'vectors': [(0, -1)], 'vectors_black': [(0, 1)], "sliding" : False, "black": True},
@@ -33,17 +34,23 @@ class movement_of_indivisual_pieces:
                     self.canvas.delete(space)
                 self.spaces_to_move.clear()
 
+    def item_destroyed(self, event, square_id, unique_id):
+        pass
+
     def piece_infront(self, square_id):
         square_coords = self.canvas.coords(square_id)  
         overlapping = self.canvas.find_overlapping(*square_coords)
         for item in overlapping:
-            if "pieces" in self.canvas.gettags(item):
+            tags = self.canvas.gettags(item)
+            if "pieces" in tags:
                 self.Flag = True
-                return self.canvas.gettags(item)
+                return tags, item
         return None
 
-    def button_clicked(self, event, square_id, unique_id):
+    def button_clicked(self, event, square_id, unique_id,  lpi=None, special_flag=False):
         print("Clicked on indicator")
+        if special_flag and lpi:
+            self.canvas.delete(lpi)
         square_id_coords = self.canvas.coords(square_id)
         print(square_id_coords)
         center_x = (square_id_coords[0] + square_id_coords[2]) / 2
@@ -53,6 +60,9 @@ class movement_of_indivisual_pieces:
         self.remove_spaces()
 
     def draw_indicator(self, x, y, size, ID, ccd):
+        last_piece_id = None
+        niche_id = None
+
         square = (self.canvas.create_rectangle(x - size // 2, 
                                                     y - size // 2, 
                                                     x + size // 2, 
@@ -63,7 +73,10 @@ class movement_of_indivisual_pieces:
         self.spaces_to_move.append(square)
         self.canvas.tag_bind(square, "<Button-1>", lambda event, s=square, id=ID: self.button_clicked(event, s, id))
 
-        last_piece_id = self.piece_infront(square_id=square)
+        result = self.piece_infront(square_id=square)
+
+        if result is not None:
+            last_piece_id, niche_id = result
         
         if last_piece_id is not None:
             piece_color = last_piece_id[0][0] if last_piece_id and last_piece_id[0] else None
@@ -71,12 +84,11 @@ class movement_of_indivisual_pieces:
                 self.canvas.delete(square)
                 if self.spaces_to_move and self.spaces_to_move[-1] == square:
                     self.spaces_to_move.pop()
-          
-          
-        
+            elif piece_color != ccd[0]:
+                self.canvas.itemconfig(square, fill="red")
+                self.canvas.tag_bind(square, "<Button-1>", lambda event, s=square, id=ID: self.button_clicked(event, s, id, special_flag = True, lpi=niche_id))
 
     def move_pieces(self, event, unique_id, ccd, square_size):
-        self.Flag = False
         self.remove_spaces()
         coords = self.canvas.coords(unique_id)
         start_x = coords[0]
@@ -90,6 +102,7 @@ class movement_of_indivisual_pieces:
             key = "vectors_black" if (not is_white and rules.get("black")) else "vectors"
 
             for vx, vy in rules[key]:
+                self.Flag = False
                 cur_x = start_x
                 cur_y = start_y
 
