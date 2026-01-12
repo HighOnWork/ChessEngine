@@ -1,7 +1,7 @@
 # from chess_pieces import ChessPieces
 # import tkinter as tk
 
-from tkinter import LAST
+from tkinter import FALSE, LAST
 
 
 class movement_of_indivisual_pieces:
@@ -49,6 +49,9 @@ class movement_of_indivisual_pieces:
 
     def button_clicked(self, event, square_id, unique_id,  lpi=None, special_flag=False):
         print("Clicked on indicator")
+        tags = self.canvas.gettags(unique_id)
+        if "unmoved" in tags:
+            self.canvas.dtag(unique_id, "unmoved")
         if special_flag and lpi:
             self.canvas.delete(lpi)
         square_id_coords = self.canvas.coords(square_id)
@@ -89,6 +92,7 @@ class movement_of_indivisual_pieces:
                 self.canvas.tag_bind(square, "<Button-1>", lambda event, s=square, id=ID: self.button_clicked(event, s, id, special_flag = True, lpi=niche_id))
 
     def move_pieces(self, event, unique_id, ccd, square_size):
+        i = 1
         self.remove_spaces()
         coords = self.canvas.coords(unique_id)
         start_x = coords[0]
@@ -114,11 +118,21 @@ class movement_of_indivisual_pieces:
                    
                     self.draw_indicator(cur_x, cur_y, square_size, unique_id, ccd)
 
-                    if not rules.get("sliding"):
-                         break
+                    if ccd[1] == 'p':
+                        tags = self.canvas.gettags(unique_id)
+                        if ("unmoved" in tags) and i > 0:
+                            i -= 1
+                            continue
+                        else:
+                            break
+                       
+                    if not rules.get("sliding") and ccd[1] != 'p':
+                        break
 
-                    if self.Flag:
-                         break
+                    if self.Flag and ccd[1] != 'p':
+                        break
+                    
+                    
                     
                     
 

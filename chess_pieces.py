@@ -33,7 +33,7 @@ class ChessPieces:
          unique_id = self.canvas.create_image(
               pixel_x, pixel_y,
               image=self.images[code],
-              tags=(code, "pieces")
+              tags=(code, "pieces", "unmoved")
          )
          self.canvas.tag_bind(unique_id, 
                               "<Button-1>",
