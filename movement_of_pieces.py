@@ -82,8 +82,9 @@ class movement_of_indivisual_pieces:
             last_piece_id, niche_id = result
         
         if last_piece_id is not None:
+            print(last_piece_id)
             piece_color = last_piece_id[0][0] if last_piece_id and last_piece_id[0] else None
-            if piece_color == ccd[0]:
+            if piece_color == ccd[0] or ccd[1] == "p":
                 self.canvas.delete(square)
                 if self.spaces_to_move and self.spaces_to_move[-1] == square:
                     self.spaces_to_move.pop()
