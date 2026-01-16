@@ -35,7 +35,7 @@ class movement_of_indivisual_pieces:
                 self.canvas.delete(space)
             self.spaces_to_move.clear()
 
-    def is_still_in_check(self, ccd, x, y, item):
+    def is_still_in_check(self, ccd, x, y, item, size):
         # Safety Check: If the item was already removed by collision logic, stop.
         if item not in self.spaces_to_move:
             return
@@ -49,8 +49,12 @@ class movement_of_indivisual_pieces:
         coords_for_checking_piece = self.canvas.coords(self.type_checking)
         
         # Calculate coordinates of the piece checking the king
-        attacker_center_x = coords_for_checking_piece[0]
-        attacker_center_y = coords_for_checking_piece[1]
+        attacker_center_x = int(coords_for_checking_piece[0])
+        attacker_center_y = int(coords_for_checking_piece[1])
+
+        king_x, king_y = self.get_king_coords(ccd[0])
+        if king_x is None: return
+        king_x, king_y = int(king_x), int(king_y)
 
         move_rules = self.MOVE_RULES[self.type_checking[1]]
         
@@ -61,38 +65,31 @@ class movement_of_indivisual_pieces:
             
         turns = 8 if move_rules['sliding'] == True else 2
         
-        # This logic attempts to find the path of the attack
-        # Note: This is a simplified check logic. It assumes the blocking piece
-        # must land exactly on the vector ray.
         for vx, vy in move_rules[rule]:
             cur_x = attacker_center_x
             cur_y = attacker_center_y
-            
-            # We must trace FROM the attacker TO the King (or vice versa)
-            # This part of your logic assumes you know the vector. 
-            # Ideally, we should check if this specific vector hits the King.
-            # For now, keeping your existing structure but fixing the crash.
-            
-            for turn in range(turns):
-                if not (0 < cur_x < 1000 and 0 < cur_y < 1000): break
-                cur_x += vx * 100 # Warning: Multiplier 100 is a magic number, should be 'size'
-                cur_y += vy * 100
-                all_intercepting_coords.append((cur_x, cur_y))
 
-        # CRITICAL FIX: Don't pop blindly. 
-        # Check if this specific move (x,y) blocks the line of fire.
-        # If the move is NOT in the intercepting path, it doesn't solve check.
-        # (This logic is still brittle for complex chess rules, but fixes the crash).
+            current_ray = []
+
+            current_ray.append((cur_x, cur_y))
+
+            for turn in range(turns):
+                if not (0 < cur_x < size * 8 and 0 < cur_y < size * 8): break
+                cur_x += int(vx * size) 
+                cur_y += int(vy * size)
+
+                current_ray.append((cur_x, cur_y))
+
+                if (king_x, king_y) in current_ray:
+                    all_intercepting_coords.extend(current_ray)
         
-        # Since exact float matching is hard, we might want a tolerance, 
-        # but for grid chess, (x,y) should match exactly if calculated correctly.
-        if (x, y) not in all_intercepting_coords:
+        if (int(x), int(y)) not in all_intercepting_coords:
             # Safely remove specific item
             if item in self.spaces_to_move:
                 self.spaces_to_move.remove(item)
                 self.canvas.delete(item)
         else:
-            self.canvas.config(item, fill="blue") # valid block
+            pass
 
     def get_king_coords(self, king_color):
         king_tag = f"{king_color}k" 
@@ -269,7 +266,7 @@ class movement_of_indivisual_pieces:
 
         # Only check for checkmate constraints if the square still exists
         if self.check_flag and square_valid:
-            self.is_still_in_check(ccd, x, y, square)
+            self.is_still_in_check(ccd, x, y, square, size)
 
     def move_pieces(self, event, unique_id, ccd, square_size):
         self.check_flag = False
