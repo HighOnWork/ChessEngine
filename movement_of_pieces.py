@@ -175,9 +175,9 @@ class movement_of_indivisual_pieces:
                         # Ensure it is an enemy
                         if (ccd[0] == 'w' and any(t.startswith('b') for t in tags)) or \
                            (ccd[0] == 'b' and any(t.startswith('w') for t in tags)):
-                            self.draw_capture_indicator(dx, dy, size, unique_id, item)
+                            self.draw_capture_indicator(dx, dy, size, unique_id, item, ccd)
 
-    def draw_capture_indicator(self, x, y, size, ID, target_piece_id):
+    def draw_capture_indicator(self, x, y, size, ID, target_piece_id, ccd):
         square = self.canvas.create_rectangle(
             x - size // 2, y - size // 2,
             x + size // 2, y + size // 2,
@@ -186,7 +186,7 @@ class movement_of_indivisual_pieces:
         self.spaces_to_move.append(square)
         self.canvas.tag_bind(square, "<Button-1>", 
             lambda event, s=square, id=ID, target=target_piece_id: 
-            self.button_clicked(event, s, id, ccd=None, size=size, special_flag=True, lpi=target))
+            self.button_clicked(event, s, id, ccd=ccd, size=size, special_flag=True, lpi=target))
 
     def piece_infront(self, square_id):
         square_coords = self.canvas.coords(square_id)  
@@ -223,8 +223,11 @@ class movement_of_indivisual_pieces:
         
         # Move piece
         self.canvas.move(unique_id, dest_x - curr_x, dest_y - curr_y)
-        self.move_count += 1
-        self.remove_spaces()
+        if self.is_king_in_check(ccd=ccd, size=size):
+            self.canvas.move(unique_id, -(dest_x - curr_x), -(dest_y - curr_y))
+        else:
+            self.move_count += 1
+            self.remove_spaces()
 
     def draw_indicator(self, x, y, size, ID, ccd):
         self.Flag = False
