@@ -43,31 +43,24 @@ class movement_of_indivisual_pieces:
         self.canvas.master.destroy()
 
     def can_castle(self, ccd, size):
-        # 1. Basic Requirements: King must not have moved
         king_id = self.canvas.find_withtag(ccd)[0]
         king_tags = self.canvas.gettags(king_id)
         
-        # We assume you add the tag "unmoved" when creating pieces
         if "unmoved" not in king_tags:
             return
 
         king_coords = self.canvas.coords(king_id)
         k_x, k_y = king_coords[0], king_coords[1]
 
-        # 2. Check both sides (Left/Queen-side and Right/King-side)
-        # Directions: -1 is Left, +1 is Right
         sides = [
             {"dir": -1, "rook_col": 0, "empty_cols": [1, 2, 3], "type": "long"},
             {"dir": 1, "rook_col": 7, "empty_cols": [5, 6], "type": "short"}
         ]
 
         for side in sides:
-            # Find the Rook at the expected location
-            # Note: We calculate rook X based on column index (0 or 7)
-            # Center of a square = (col * size) + (size / 2)
+       
             rook_target_x = (side["rook_col"] * size) + (size / 2)
-            
-            # Find items at that specific rook location
+  
             items_at_rook = self.canvas.find_overlapping(
                 rook_target_x - 5, k_y - 5, rook_target_x + 5, k_y + 5
             )
@@ -75,32 +68,31 @@ class movement_of_indivisual_pieces:
             rook_id = None
             for item in items_at_rook:
                 tags = self.canvas.gettags(item)
-                # Check for friendly Rook with "unmoved" tag
+      
                 if f"{ccd[0]}r" in tags and "unmoved" in tags:
                     rook_id = item
                     break
             
             if rook_id:
-                # 3. Check if path is clear
+        
                 path_blocked = False
                 for col in side["empty_cols"]:
                     check_x = (col * size) + (size / 2)
-                    # Check a small box in the center of the square
+
                     overlapping = self.canvas.find_overlapping(
                         check_x - 10, k_y - 10, check_x + 10, k_y + 10
                     )
                     
                     for item in overlapping:
                         tags = self.canvas.gettags(item)
-                        # If a piece (white or black) is here, path is blocked
+
                         if any(t.startswith('w') or t.startswith('b') for t in tags):
                             path_blocked = True
                             break
                     if path_blocked: break
 
                 if not path_blocked:
-                    # 4. Create the Move Indicator
-                    # King moves 2 squares: Current X + (Direction * 2 * Size)
+
                     dest_x = k_x + (side["dir"] * 2 * size)
                     
                     square = self.canvas.create_rectangle(
@@ -110,8 +102,6 @@ class movement_of_indivisual_pieces:
                     )
                     self.spaces_to_move.append(square)
 
-                    # Pass specific arguments to button_clicked to handle the rook
-                    # We pass the Rook ID (rID) and the direction (side)
                     self.canvas.tag_bind(square, "<Button-1>", 
                         lambda event, s=square, kid=king_id, rid=rook_id, direction=side["dir"]: 
                         self.button_clicked(event, s, kid, ccd=ccd, size=size, castle_rook_id=rid, castle_dir=direction)
@@ -127,22 +117,21 @@ class movement_of_indivisual_pieces:
         p_color = piece_tag[0]
         rules = self.MOVE_RULES[p_type]
     
-        # Handle Pawn differently (they have unique move vs capture rules)
         if p_type == 'p':
             dir = -1 if p_color == 'w' else 1
-            # Forward moves
+   
             for step in [1, 2] if "unmoved" in self.canvas.gettags(piece_id) else [1]:
                 tx, ty = start_x, start_y + (dir * size * step)
-                if self.get_piece_at(tx, ty, piece_id): break # Blocked
+                if self.get_piece_at(tx, ty, piece_id): break
                 moves.append((tx, ty))
-            # Diagonal captures
+  
             for dx in [-size, size]:
                 tx, ty = start_x + dx, start_y + (dir * size)
                 target = self.get_piece_at(tx, ty, piece_id)
                 if target and not self.canvas.gettags(target)[0].startswith(p_color):
                     moves.append((tx, ty))
         else:
-            # Sliding and Jumping pieces
+ 
             vectors = rules['vectors']
             max_steps = 8 if rules['sliding'] else 2
             for vx, vy in vectors:
@@ -153,62 +142,52 @@ class movement_of_indivisual_pieces:
                     target = self.get_piece_at(tx, ty, piece_id)
                     if target:
                         if not self.canvas.gettags(target)[0].startswith(p_color):
-                            moves.append((tx, ty)) # Can capture
-                        break # Blocked regardless of color
+                            moves.append((tx, ty)) 
+                        break 
                     moves.append((tx, ty))
         return moves
 
     def checkmate(self, ccd, size):
         """Checks if the player whose turn it just became is in checkmate."""
-        # The opponent is the one who might be mated
+
         current_color = 'b' if ccd[0] == 'w' else 'w'
-    
-        # 1. If the king isn't even in check, it can't be checkmate
+
         if not self.is_king_in_check([current_color, 'k'], size):
             return False
 
-        # 2. Try EVERY move for EVERY piece of the current_color
         all_pieces = self.canvas.find_withtag("pieces")
         for piece in all_pieces:
             tags = self.canvas.gettags(piece)
             if not tags[0].startswith(current_color):
                 continue
-            
-            # Get all squares this piece could theoretically move to
+ 
             potential_moves = self.get_potential_moves(piece, tags[0], size)
         
             for move_x, move_y in potential_moves:
-                # Simulation: Temporarily move the piece
+
                 orig_coords = self.canvas.coords(piece)
-            
-                # Check for a piece to "capture" at the destination
+
                 target = self.get_piece_at(move_x, move_y, piece)
                 target_state = None
                 if target:
                     target_state = self.canvas.itemcget(target, 'state')
                     self.canvas.itemconfig(target, state='hidden')
-            
-                # Move the piece
+
                 self.canvas.coords(piece, move_x, move_y)
-            
-                # Is the king STILL in check after this move?
+ 
                 still_in_check = self.is_king_in_check([current_color, 'k'], size)
-            
-                # Undo simulation
+
                 self.canvas.coords(piece, orig_coords[0], orig_coords[1])
                 if target:
                     self.canvas.itemconfig(target, state=target_state)
-            
-                # If we found even ONE move that saves the king, it's not mate
+
                 if not still_in_check:
                     return False
 
-        # If no piece had a move that escaped check:
         winner = "White" if ccd[0] == 'w' else "Black"
         print(f"CHECKMATE! {winner} wins!")
         winner = "White" if ccd[0] == 'w' else "Black"
-    
-        # Trigger the Popup
+
         self.show_game_over(winner)
         return True
 
@@ -222,19 +201,15 @@ class movement_of_indivisual_pieces:
         return None
 
     def is_still_in_check(self, ccd, x, y, item, size):
-        # Safety Check: If the item was already removed by collision logic, stop.
+
         if item not in self.spaces_to_move:
             return
 
-        
-        
-        # Guard clause: If we don't know what checked us, we can't calculate the block
         if not self.type_checking: 
             return
 
         coords_for_checking_piece = self.canvas.coords(self.type_checking)
-        
-        # Calculate coordinates of the piece checking the king
+
         attacker_center_x = int(coords_for_checking_piece[0])
         attacker_center_y = int(coords_for_checking_piece[1])
 
@@ -270,7 +245,6 @@ class movement_of_indivisual_pieces:
                     self.all_intercepting_coords.extend(current_ray)
         
         if (int(x), int(y)) not in self.all_intercepting_coords:
-            # Safely remove specific item
             if item in self.spaces_to_move:
                 if self.checkmate(ccd, size):
                     winner = "White" if ccd[0] == "b" else "Black"
@@ -350,10 +324,9 @@ class movement_of_indivisual_pieces:
         """ Checks for enemies diagonally in front of the pawn """
         direction = -1 if ccd[0] == 'w' else 1
         
-        # Diagonal offsets
         diagonals = [
-            (x - size, y + (direction * size)), # Left
-            (x + size, y + (direction * size))  # Right
+            (x - size, y + (direction * size)), 
+            (x + size, y + (direction * size)) 
         ]
         
         for dx, dy in diagonals:
@@ -361,9 +334,9 @@ class movement_of_indivisual_pieces:
                 overlapping = self.canvas.find_overlapping(dx - 5, dy - 5, dx + 5, dy + 5)
                 for item in overlapping:
                     tags = self.canvas.gettags(item)
-                    # Check if it is a piece and NOT the board
+ 
                     if any(t.startswith('w') or t.startswith('b') for t in tags):
-                        # Ensure it is an enemy
+
                         if (ccd[0] == 'w' and any(t.startswith('b') for t in tags)) or \
                            (ccd[0] == 'b' and any(t.startswith('w') for t in tags)):
                             self.draw_capture_indicator(dx, dy, size, unique_id, item, ccd)
@@ -384,7 +357,7 @@ class movement_of_indivisual_pieces:
         overlapping = self.canvas.find_overlapping(*square_coords)
         for item in overlapping:
             tags = self.canvas.gettags(item)
-            # Looking for chess pieces, not the board squares or the indicator itself
+
             if any(t.startswith('w') or t.startswith('b') for t in tags) and item != square_id:
                 self.Flag = True
                 return tags, item
@@ -401,48 +374,39 @@ class movement_of_indivisual_pieces:
         dest_x = (square_coords[0] + square_coords[2]) / 2
         dest_y = (square_coords[1] + square_coords[3]) / 2
 
-        # --- 1. Move King ---
         dx = dest_x - curr_x
         dy = dest_y - curr_y
         self.canvas.move(unique_id, dx, dy)
 
-        # --- 2. Handle Castling (Move the Rook) ---
         rook_start_coords = None
         rook_dx = 0
         if castle_rook_id:
             rook_start_coords = self.canvas.coords(castle_rook_id)
-            # The rook needs to end up on the OTHER side of the King
-            # If King moved Right (+2), Rook ends at King X - 1
-            # If King moved Left (-2), Rook ends at King X + 1
+
             rook_dest_x = dest_x - (castle_dir * size)
             
             rook_dx = rook_dest_x - rook_start_coords[0]
-            # Move Rook
+
             self.canvas.move(castle_rook_id, rook_dx, 0)
 
-        # --- 3. Handle Capture (Hide piece for check validation) ---
         captured_piece_state = None
         if special_flag and lpi:
             captured_piece_state = self.canvas.itemcget(lpi, 'state')
             self.canvas.itemconfig(lpi, state='hidden')
 
-        # --- 4. Validate Move (Is King in Check?) ---
         if self.is_king_in_check(ccd=ccd, size=size):
-            # ILLEGAL: Undo everything
-            self.canvas.move(unique_id, -dx, -dy) # Undo King
+
+            self.canvas.move(unique_id, -dx, -dy)
             if castle_rook_id:
-                self.canvas.move(castle_rook_id, -rook_dx, 0) # Undo Rook
+                self.canvas.move(castle_rook_id, -rook_dx, 0)
             if lpi:
-                self.canvas.itemconfig(lpi, state=captured_piece_state) # Undo Capture
+                self.canvas.itemconfig(lpi, state=captured_piece_state)
             print("Move illegal: King remains in check")
         else:
-            # LEGAL: Finalize
-            
-            # Remove "unmoved" tag from King
+
             if "unmoved" in tags:
                 self.canvas.dtag(unique_id, "unmoved")
-            
-            # Remove "unmoved" tag from Rook if castled
+
             if castle_rook_id:
                 self.canvas.dtag(castle_rook_id, "unmoved")
 
@@ -466,32 +430,27 @@ class movement_of_indivisual_pieces:
         self.canvas.tag_bind(square, "<Button-1>", lambda event, s=square, id=ID: self.button_clicked(event, s, id, ccd=ccd, size=size))
 
         result = self.piece_infront(square_id=square)
-        
-        # We must keep track of whether the square is still valid
+
         square_valid = True
 
         if result is not None:
             last_piece_tags, niche_id = result
-            # Get the color of the piece in front
-            # Assumes tags like ['wp', 'unmoved', ...] or ['br', ...]
+
             piece_tag = next((t for t in last_piece_tags if t.startswith('w') or t.startswith('b')), None)
             
             if piece_tag:
                 piece_color = piece_tag[0]
-                
-                # If friendly piece OR if it's a pawn (pawns can't take forward)
+
                 if piece_color == ccd[0] or ccd[1] == "p":
                     if square in self.spaces_to_move:
                         self.spaces_to_move.remove(square)
                     self.canvas.delete(square)
-                    square_valid = False # Mark as invalid
+                    square_valid = False
 
-                # If enemy piece (and not a pawn moving forward) -> Capture logic
                 elif piece_color != ccd[0] and ccd[1] != "p":
                     self.canvas.itemconfig(square, fill="red")
                     self.canvas.tag_bind(square, "<Button-1>", lambda event, s=square, id=ID: self.button_clicked(event, s, id, special_flag = True, lpi=niche_id, ccd=ccd, size=size))
 
-        # Only check for checkmate constraints if the square still exists
         if self.check_flag and square_valid:
             self.is_still_in_check(ccd, x, y, square, size)
 
@@ -500,7 +459,7 @@ class movement_of_indivisual_pieces:
         self.remove_spaces()
         
         coords = self.canvas.coords(unique_id)
-        # Use center point for clearer math
+
         start_x = coords[0]
         start_y = coords[1]
         
@@ -510,10 +469,8 @@ class movement_of_indivisual_pieces:
             self.check_flag = True
             print("KING IS IN CHECK")
         
-        # Turn enforcement
         if (self.move_count % 2 == 0 and not is_white) or (self.move_count % 2 != 0 and is_white):
             
-            # --- FIX: Handle Pawn Diagonal Captures ---
             if ccd[1] == 'p':
                 self.piece_to_the_side(start_x, start_y, square_size, unique_id, ccd)
 
@@ -521,7 +478,6 @@ class movement_of_indivisual_pieces:
                 print("Works")
                 self.can_castle(ccd, square_size)
 
-            # Standard Movements
             rules = self.MOVE_RULES[ccd[1]]
             key = "vectors_black" if (not is_white and rules.get("black")) else "vectors"
 
@@ -542,8 +498,7 @@ class movement_of_indivisual_pieces:
 
                     self.Flag = False
                     self.draw_indicator(cur_x, cur_y, square_size, unique_id, ccd)
-                    
-                    # If blocked, stop rays for pawns and non-sliding pieces
+
                     if self.Flag: 
                         break 
                     
