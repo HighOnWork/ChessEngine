@@ -1,5 +1,7 @@
 from tkinter import FALSE, LAST, TRUE, messagebox
 from typing import Sized
+import os
+from PIL import Image, ImageTk
 
 class movement_of_indivisual_pieces:
     def __init__(self, canvas):
@@ -17,6 +19,7 @@ class movement_of_indivisual_pieces:
         self.Flag = False
         self.all_intercepting_coords = []
         self.RightFlag = False
+        self.images = {}
         self.LeftFlag = False
         self.MOVE_RULES = {
             "p" : {'vectors': [(0, -1)], 'vectors_black': [(0, 1)], "sliding" : False, "black": True},
@@ -37,6 +40,39 @@ class movement_of_indivisual_pieces:
             for space in self.spaces_to_move:
                 self.canvas.delete(space)
             self.spaces_to_move.clear()
+
+    def pawnPromotion(self, ID, size, ccd):
+        pieces = {
+        "wr" : "WhiteRook.png", "br" : "BlackRook.png",
+        "wh" : "WhiteHorse.png", "bh" : "BlackHorse.png",
+        "wb": "WhiteBishop.png", "bb": "BlackBishop.png",
+        "wq": "WhiteQueen.png", "bq": "BlackQueen.png",
+        "wk": "WhiteKing.png", "bk": "BlackKing.png"
+        }
+
+        pawnCoords = self.canvas.coords(ID)
+        pawnx = pawnCoords[0]
+        pawny = pawnCoords[1]
+        pos_x = 0
+        boundary = size * 8 if ccd[0] == "w" else size * 1
+        pos_y = boundary - size // 2
+        if boundary - size <= pawny <= boundary:
+            print("Pawn can promote")
+            ############################################
+            for code, filename in pieces.items():
+                path = os.path.join(".", filename)
+                img = Image.open(path)
+                img = img.resize((25, 25), Image.Resampling.LANCZOS)
+                self.images[code] = ImageTk.PhotoImage(img) 
+            ############################################
+            for code, filename in self.images.items():
+                unique_id = self.canvas.create_image(
+                  pos_x, pos_y,
+                  image=self.images[code],
+                  tags=(code, "pieces", "unmoved")
+                )
+                pos_x + ((size * 8) // 5)
+            ############################################
 
     def enpassant(self, ccd, dx, dy, unique_ID, size):
 
@@ -230,7 +266,6 @@ class movement_of_indivisual_pieces:
         return None
 
     def is_still_in_check(self, ccd, x, y, item, size):
-
         if item not in self.spaces_to_move:
             return
 
@@ -247,12 +282,13 @@ class movement_of_indivisual_pieces:
         king_x, king_y = int(king_x), int(king_y)
 
         move_rules = self.MOVE_RULES[self.type_checking_ccd[1]]
-        
+    
+        # FIX: Use self.type_checking_ccd (the string tag) instead of self.type_checking (the integer ID)
         if move_rules["black"]:
-            rule = "vectors" if self.type_checking[0] == "w" else "vectors_black"
+            rule = "vectors" if self.type_checking_ccd[0] == "w" else "vectors_black"
         else:
             rule = "vectors"
-            
+        
         turns = 8 if move_rules['sliding'] == True else 2
         
         for vx, vy in move_rules[rule]:
@@ -466,6 +502,8 @@ class movement_of_indivisual_pieces:
             self.move_count += 1
             self.remove_spaces()
             self.checkmate(ccd, size)
+            if ccd[1] == "p":
+                self.pawnPromotion(unique_id, size, ccd)
 
     def draw_indicator(self, x, y, size, ID, ccd):
         self.Flag = False
