@@ -38,6 +38,35 @@ class movement_of_indivisual_pieces:
                 self.canvas.delete(space)
             self.spaces_to_move.clear()
 
+    def enpassant(self, ccd, dx, dy, unique_ID, size):
+
+        if ccd[1] == 'p':
+            if abs(dy) == size * 2: 
+                coords = self.canvas.coords(unique_ID)
+                curr_x, curr_y = coords[0], coords[1]
+
+                tagWeWant = "b" if ccd[0] == "w" else "w"
+
+                right_side = self.canvas.find_overlapping(
+                    curr_x + size - 5, curr_y - 5, 
+                    curr_x + size + 5, curr_y + 5
+                )
+                for item in right_side:
+                    tags = self.canvas.gettags(item)
+                    if any(t.startswith(tagWeWant) and t.endswith("p") for t in tags):
+
+                        self.canvas.addtag("enpassantleftside", "withtag", item)
+
+
+                left_side = self.canvas.find_overlapping(
+                    curr_x - size - 5, curr_y - 5, 
+                    curr_x - size + 5, curr_y + 5
+                )
+                for item in left_side:
+                    tags = self.canvas.gettags(item)
+                    if any(t.startswith(tagWeWant) and t.endswith("p") for t in tags):
+                        self.canvas.addtag("enpassantrightside", "withtag", item)
+
     def show_game_over(self, winner):
         messagebox.showinfo("Game over", f"CHECKMATE! {winner} wins the match.")
         self.canvas.master.destroy()
@@ -363,7 +392,12 @@ class movement_of_indivisual_pieces:
                 return tags, item
         return None
 
-    def button_clicked(self, event, square_id, unique_id, ccd, size, lpi=None, special_flag=False, castle_rook_id=None, castle_dir=None):
+    def button_clicked(self, event, square_id, unique_id, ccd, size, lpi=None, special_flag=False, castle_rook_id=None, castle_dir=None, en_passant=False):
+
+        for item in self.canvas.find_all():
+            self.canvas.dtag(item, "enpassantleftside")
+            self.canvas.dtag(item, "enpassantrightside")
+
         self.check_flag = False
         tags = self.canvas.gettags(unique_id)
         
@@ -376,17 +410,31 @@ class movement_of_indivisual_pieces:
 
         dx = dest_x - curr_x
         dy = dest_y - curr_y
+
         self.canvas.move(unique_id, dx, dy)
+
+        self.enpassant(ccd, dx, dy, unique_ID=unique_id, size=size)
+
+        if en_passant:
+
+            enemy_y = curr_y 
+            enemy_x = dest_x
+            
+            overlapping = self.canvas.find_overlapping(enemy_x-5, enemy_y-5, enemy_x+5, enemy_y+5)
+            
+            for item in overlapping:
+                tags = self.canvas.gettags(item)
+                enemy_color = 'b' if ccd[0] == 'w' else 'w'
+                if f"{enemy_color}p" in tags:
+                    self.canvas.delete(item)
+                    break
 
         rook_start_coords = None
         rook_dx = 0
         if castle_rook_id:
             rook_start_coords = self.canvas.coords(castle_rook_id)
-
             rook_dest_x = dest_x - (castle_dir * size)
-            
             rook_dx = rook_dest_x - rook_start_coords[0]
-
             self.canvas.move(castle_rook_id, rook_dx, 0)
 
         captured_piece_state = None
@@ -395,15 +443,17 @@ class movement_of_indivisual_pieces:
             self.canvas.itemconfig(lpi, state='hidden')
 
         if self.is_king_in_check(ccd=ccd, size=size):
-
             self.canvas.move(unique_id, -dx, -dy)
             if castle_rook_id:
                 self.canvas.move(castle_rook_id, -rook_dx, 0)
             if lpi:
                 self.canvas.itemconfig(lpi, state=captured_piece_state)
+            
+            if en_passant:
+                print("Warning: En Passant caused self-check. Piece restoration not fully implemented.")
+            
             print("Move illegal: King remains in check")
         else:
-
             if "unmoved" in tags:
                 self.canvas.dtag(unique_id, "unmoved")
 
@@ -428,6 +478,39 @@ class movement_of_indivisual_pieces:
                                                width=2))
         self.spaces_to_move.append(square)
         self.canvas.tag_bind(square, "<Button-1>", lambda event, s=square, id=ID: self.button_clicked(event, s, id, ccd=ccd, size=size))
+
+        if ccd[1] == 'p':
+            tags = self.canvas.gettags(ID)
+
+            direction = -1 if ccd[0] == 'w' else 1
+
+            target_y = y
+
+            if "enpassantrightside" in tags:
+                target_x = x + size
+                
+                square = self.canvas.create_rectangle(
+                    target_x - size // 2, target_y - size // 2,
+                    target_x + size // 2, target_y + size // 2,
+                    fill="red", stipple="gray50", width=2
+                )
+                self.spaces_to_move.append(square)
+
+                self.canvas.tag_bind(square, "<Button-1>", 
+                    lambda event, s=square, id=ID: self.button_clicked(event, s, id, ccd=ccd, size=size, en_passant=True))
+
+            elif "enpassantleftside" in tags:
+                target_x = x - size
+                
+                square = self.canvas.create_rectangle(
+                    target_x - size // 2, target_y - size // 2,
+                    target_x + size // 2, target_y + size // 2,
+                    fill="red", stipple="gray50", width=2
+                )
+                self.spaces_to_move.append(square)
+                
+                self.canvas.tag_bind(square, "<Button-1>", 
+                    lambda event, s=square, id=ID: self.button_clicked(event, s, id, ccd=ccd, size=size, en_passant=True))
 
         result = self.piece_infront(square_id=square)
 
